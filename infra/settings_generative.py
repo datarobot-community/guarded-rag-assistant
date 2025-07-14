@@ -73,8 +73,8 @@ deployment_args = DeploymentArgs(
     label=f"Guarded RAG Deployment [{project_name}]",
     association_id_settings=datarobot.DeploymentAssociationIdSettingsArgs(
         column_names=["association_id"],
-        auto_generate_id=False,
-        required_in_prediction_requests=True,
+        auto_generate_id=True,
+        required_in_prediction_requests=False,
     ),
     predictions_settings=(
         None

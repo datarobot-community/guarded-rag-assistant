@@ -276,6 +276,9 @@ elif settings_main.core.application_type == ApplicationType.DR:
             datarobot.ApplicationSourceFromTemplateRuntimeParameterValueArgs(
                 key="CUSTOM_METRIC_ID", value=feedback_metric.id, type="string"
             ),
+            datarobot.ApplicationSourceFromTemplateRuntimeParameterValueArgs(
+                key="ENABLE_CHAT_API", value="True", type="boolean"
+            ),
         ],
     )
     qa_application = datarobot.CustomApplication(

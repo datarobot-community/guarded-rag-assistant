@@ -55,7 +55,7 @@ def get_rag_completion(
     """Retrieve predictions from a DataRobot RAG deployment and DataRobot guard deployment"""
     dr_client = dr.client.get_client()
     openai_client = OpenAI(
-        base_url=dr_client.endpoint + f"/deployments/{rag_deployment_id}",
+        base_url=f"{dr_client.endpoint.rstrip('/')}/deployments/{rag_deployment_id}",
         api_key=dr_client.token,
     )
 

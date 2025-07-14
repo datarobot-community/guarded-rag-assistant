@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+
+## [0.2.0] - 2025-07-11
+
+### Added
+- Shellcheck configuration for shell script quality assurance
+- Chat API enabled by default for enhanced user experience
+
+### Fixed
+- Fix prompt column issue by upgrading pulumi-datarobot to 0.10.8
+
 ## [0.1.21] - 2025-04-09
 
 ### Fixed
