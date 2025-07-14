@@ -1,0 +1,10 @@
+pydantic>=2.9.2,<2.10
+pydantic-settings>=2.5.2,<2.6
+eval_type_backport>=0.2.0,<0.3
+
+# Constrained by moderations dependencies
+langchain<0.3
+langchain-openai<0.2
+langchain-community<0.3
+langchain-huggingface<0.1
+faiss-cpu>=1.8.0,<1.9

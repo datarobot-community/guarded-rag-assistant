@@ -1,0 +1,11 @@
+---
+name: guarded-rag-assistant
+runtime:
+  name: python
+main: infra
+description: Guarded Rag Assistant
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: python
+  datarobot:tracecontext: guarded-rag-assistant

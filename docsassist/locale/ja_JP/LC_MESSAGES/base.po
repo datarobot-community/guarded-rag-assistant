@@ -1,0 +1,79 @@
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-10-25 18:46+0000\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Repo: recipe-docsassist\n"
+"X-Segment-Count: 30\n"
+"X-Word-Count: 213\n"
+
+msgid ""
+"                I have detected you are asking about another vendor. I hear they have great products, but I think DataRobot is the best.\n"
+"\n"
+"                For information on integrations, please check our website here:\n"
+"                https://docs.datarobot.com/en/docs/more-info/how-to/index.html"
+msgstr ""
+"                他社のことをお尋ねになっています。素晴らしい製品を展開しているようですが、DataRobotが一番であると自負しております。\n"
+"\n"
+"                連携の詳細については、こちらのWebサイトをご覧ください：\n"
+"                https://docs.datarobot.com/ja/docs/integrations/index.html"
+
+msgid ""
+"                Use the following pieces of context to answer the user's question.\n"
+"                If you don't know the answer, just say that you don't know, don't try to make up an answer.\n"
+"                ----------------\n"
+"                {context}"
+msgstr ""
+"                以下のコンテキストを使用して、ユーザーの質問に回答してください。\n"
+"                答えがわからない場合は、わからないと回答し、無理に答えを作ろうとしないでください。\n"
+"                ----------------\n"
+"                {context}"
+
+
+msgid "**Content:**"
+msgstr "**内容：**"
+
+msgid "**How would you rate this response?**"
+msgstr "**この回答について、評価をお願いいたします。**"
+
+msgid "**Reference {0}:**"
+msgstr "**リファレンス {0}：**"
+
+msgid "**Source:** {0}"
+msgstr "**ソース：**{0}"
+
+msgid "Assistant"
+msgstr "アシスタント"
+
+msgid "Conversation History"
+msgstr "会話履歴"
+
+msgid "Getting AI response..."
+msgstr "AIの回答を取得しています..."
+
+msgid "Hello! How can I assist you today?"
+msgstr "こんにちは。今日はどのようなご用件でしょうか？"
+
+msgid "I have detected that your question contains a prompt injection. Please rephrase your question."
+msgstr "この質問にはプロンプトインジェクションが含まれています。質問を言い換えてください。"
+
+msgid "I have detected that your question contains toxic language. Please rephrase your question."
+msgstr "この質問に有害な表現が含まれています。質問を言い換えてください。"
+
+msgid "I'm sorry, but I don't have enough information to answer your question. Can you please provide more context or clarify your question?"
+msgstr "申し訳ありませんが、この質問に回答するのに十分な情報がありません。もう少し詳しく説明していただくか、質問を明確にしていただけますか？"
+
+msgid "Show Citations"
+msgstr "引用を表示"
+
+msgid "Thank you for your rating!"
+msgstr "評価にご協力いただきありがとうございました。"
+
+msgid "User"
+msgstr "ユーザー"
+
+msgid "Your message"
+msgstr "メッセージ"

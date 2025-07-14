@@ -1,0 +1,14 @@
+---
+name: runtime-params
+targetType: binary
+type: inference
+inferenceModel:
+  # control in docsassist.settings.py
+  targetName: flagged
+  positiveClassLabel: true
+  negativeClassLabel: false
+runtimeParameterDefinitions:
+  - fieldName: blocklist
+    type: string
+  - fieldName: prompt_feature_name
+    type: string

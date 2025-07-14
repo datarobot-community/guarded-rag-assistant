@@ -1,0 +1,41 @@
+pulumi==3.153.0
+pulumi-datarobot>=0.8.15,<0.9
+datarobot-pulumi-utils>=0.0.2.post1,<0.1
+
+datarobot>=3.5.2,<3.6
+datarobot-predict>=1.9.6,<1.10
+
+# Constrained by datarobot-drum
+pandas>=2.0.3,<3
+
+pydantic>=2.9.2,<2.10
+pydantic-settings>=2.5.2,<2.6
+eval_type_backport>=0.2.0,<0.3
+
+streamlit>=1.39.0,<2
+st-theme>=1.2.3,<2
+joblib>=1.4.2,<2
+
+jupyterlab>=4.2.5,<5
+papermill>=2.6.0,<3
+
+babel>=2.16,<3
+
+# Constrained by moderations dependencies
+langchain<0.3
+langchain-openai<0.2
+langchain-community<0.3
+langchain-huggingface<0.1
+transformers==4.49.0 # https://github.com/huggingface/transformers/issues/37311
+faiss-cpu>=1.8.0,<1.9
+
+opencv-contrib-python-headless>=4.8.1.78,<5
+unstructured[all-docs]>=0.16.3,<0.17
+
+pytest==8.0.2
+mypy==1.11.2
+types-PyYAML==6.0.12.20240917
+ruff==0.6.9
+
+google-auth
+boto3

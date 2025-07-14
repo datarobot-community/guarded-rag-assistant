@@ -1,0 +1,9 @@
+[theme]
+base = "dark"
+primaryColor = "#297ab4"
+backgroundColor = "#181d21"
+[logger]
+
+# Level of logging: 'error', 'warning', 'info', or 'debug'.
+# Default: 'info'
+level = "info"

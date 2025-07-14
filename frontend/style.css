@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto');
+
+html,
+body,
+[class*="css"] {
+    font-family: 'Roboto', sans-serif;
+}
+
+html,
+body {
+    font-size: 14px;
+}
+
+button[kind='secondary'],
+button[kind='secondaryFormSubmit'] {
+    padding: 8px 16px !important;
+    border-radius: 4px !important;
+    border: transparent !important;
+    background: #297ab4 !important;
+    color: white !important;
+    font-size: 14px !important;
+}
+
+button[kind='secondary']:hover,
+button[kind='secondaryFormSubmit']:hover {
+    background: #21689C !important;
+}
+
+header {
+    background-color: #171c20 !important;
+    border-bottom: 1px solid #2a3036;
+    visibility: hidden;
+}
+
+textarea {
+    background-color: #2A3036;
+}
+
+.chat-message {
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.user-message {
+    background-color: #2b313e;
+}
+
+.ai-message {
+    background-color: #475063;
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-label {
+    margin-bottom: 0.5rem;
+}
+
+.message-text {
+    margin-left: 1rem;
+}
