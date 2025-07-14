@@ -25,7 +25,7 @@ babel>=2.16,<3
 langchain<0.3
 langchain-openai<0.2
 langchain-community<0.3
-langchain-huggingface<0.1
+langchain-huggingface<0.4
 transformers==4.49.0 # https://github.com/huggingface/transformers/issues/37311
 faiss-cpu>=1.8.0,<1.9
 
