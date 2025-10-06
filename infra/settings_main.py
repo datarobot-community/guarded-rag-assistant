@@ -31,12 +31,13 @@ project_name = get_stack()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.absolute()
 
 # Core settings are overridable by environment variables; env values take precedence
+# Set MAIN_RAG_TYPE and MAIN_APPLICATION_TYPE in .env to override these defaults
 core = CoreSettings(
     rag_documents=str(
         PROJECT_ROOT / "assets" / "datarobot_english_documentation_docsassist.zip"
     ),
-    rag_type=RAGType.DR,
-    application_type=ApplicationType.DR,
+    rag_type=RAGType.DR,  # Override with MAIN_RAG_TYPE=diy for custom RAG logic
+    application_type=ApplicationType.DR,  # Override with MAIN_APPLICATION_TYPE=dr for default Q&A app
 )
 
 runtime_environment_moderations = RuntimeEnvironments.PYTHON_312_MODERATIONS.value

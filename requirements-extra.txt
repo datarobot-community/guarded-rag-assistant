@@ -34,7 +34,7 @@ unstructured[all-docs]>=0.16.3,<0.17
 
 pytest==8.0.2
 mypy==1.11.2
-types-PyYAML==6.0.12.20240917
+types-PyYAML==6.0.12.20250809
 ruff==0.6.9
 
 google-auth

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.2.1] - 2025-10-07
+
+### Added
+- Added dynamic metadata filtering UI in custom Streamlit frontend for DataRobot RAG deployments
+- Made RAG type and application type configurable via `MAIN_RAG_TYPE` and `MAIN_APPLICATION_TYPE` environment variables
 
 ## [0.2.0] - 2025-07-11
 
