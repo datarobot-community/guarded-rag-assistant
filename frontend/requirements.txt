@@ -1,4 +1,4 @@
-datarobot==3.4.0
+datarobot>=3.9.1,<4.0.0
 pandas==2.2.0
 requests==2.32.0
 streamlit==1.37.0

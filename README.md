@@ -1,13 +1,13 @@
 # Guarded RAG Assistant
 
-The guarded RAG assistant is an easily customizable recipe for building a RAG-powered chatbot. 
+The guarded RAG assistant is an easily customizable recipe for building a RAG-powered chatbot.
 
 In addition to creating a hosted, shareable user interface, the guarded RAG assistant provides:
 
-* Business logic and LLM-based guardrails.
-* A predictive secondary model that evaluates response quality.
-* GenAI-focused [custom metrics][custom-metrics].
-* DataRobot MLOps hosting, monitoring, and governing the individual back-end deployments.
+- Business logic and LLM-based guardrails.
+- A predictive secondary model that evaluates response quality.
+- GenAI-focused [custom metrics][custom-metrics].
+- DataRobot MLOps hosting, monitoring, and governing the individual back-end deployments.
 
 > [!WARNING]
 > Application templates are intended to be starting points that provide guidance on how to develop, serve, and maintain AI applications.
@@ -18,6 +18,7 @@ In addition to creating a hosted, shareable user interface, the guarded RAG assi
 [custom-metrics]: https://docs.datarobot.com/en/docs/workbench/nxt-console/nxt-monitoring/nxt-custom-metrics.html
 
 ## Table of contents
+
 1. [Setup](#setup)
 2. [Architecture overview](#architecture-overview)
 3. [Why build AI Apps with DataRobot app templates?](#why-build-ai-apps-with-datarobot-app-templates)
@@ -32,14 +33,21 @@ In addition to creating a hosted, shareable user interface, the guarded RAG assi
 7. [Setup for advanced users](#setup-for-advanced-users)
 8. [Data Privacy](#data-privacy)
 
-
 ## Setup
 
-> [!IMPORTANT]
-> If you are running this template in a DataRobot codespace, `pulumi` is already configured and the repo is automatically cloned;
-> skip to **Step 3**.
-1. If `pulumi` is not already installed, install the CLI following instructions [here](https://www.pulumi.com/docs/iac/download-install/). 
+**Prerequisites:** If you are using DataRobot Codespaces, this is already complete for you. If not, install:
+
+- [Python](https://www.python.org/downloads/) 3.9+
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python package manager)
+- [Pulumi](https://www.pulumi.com/docs/iac/download-install/) (infrastructure as code)
+
+**DataRobot Codespaces users:** If you opened this template from the [Application Templates gallery](https://docs.datarobot.com/en/docs/workbench/wb-apps/app-templates/index.html#application-templates), you can **skip steps 1 and 2**. If you created a fresh codespace, you can **skip step 1** but still need to **clone the repository (step 2)**.
+
+**For local development,** follow all of the following steps:
+
+1. If `pulumi` is not already installed, install the CLI following instructions [here](https://www.pulumi.com/docs/iac/download-install/).
    After installing for the first time, restart your terminal and run:
+
    ```bash
    pulumi login --local  # omit --local to use Pulumi Cloud (requires separate account)
    ```
@@ -52,25 +60,51 @@ In addition to creating a hosted, shareable user interface, the guarded RAG assi
    ```
 
 3. Rename the file `.env.template` to `.env` in the root directory of the repo and populate your credentials.
-   This template is pre-configured to use an Azure OpenAI endpoint. If you wish to use a different LLM provider, modifications to the code will be [necessary](#change-the-llm).
 
-   Please refer to the documentation inside `.env.template`
+   ```bash
+   DATAROBOT_API_TOKEN=...
+   DATAROBOT_ENDPOINT=...  # e.g. https://app.datarobot.com/api/v2
+   OPENAI_API_KEY=...
+   OPENAI_API_VERSION=...  # e.g. 2024-02-01
+   OPENAI_API_BASE=...  # e.g. https://your_org.openai.azure.com/
+   OPENAI_API_DEPLOYMENT_ID=...  # e.g. gpt-4o
+   PULUMI_CONFIG_PASSPHRASE=...  # Required. Choose your own alphanumeric passphrase to be used for encrypting pulumi config
+   ```
+
+   Use the following resources to locate the required credentials:
+
+   - **DataRobot API Token**: Refer to the _Create a DataRobot API Key_ section of the [DataRobot API Quickstart docs](https://docs.datarobot.com/en/docs/api/api-quickstart/index.html#create-a-datarobot-api-key).
+   - **DataRobot Endpoint**: Refer to the _Retrieve the API Endpoint_ section of the same [DataRobot API Quickstart docs](https://docs.datarobot.com/en/docs/api/api-quickstart/index.html#retrieve-the-api-endpoint).
+   - **LLM Endpoint and API Key**: Refer to the [Azure OpenAI documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/chatgpt-quickstart?tabs=command-line%2Cjavascript-keyless%2Ctypescript-keyless%2Cpython-new&pivots=programming-language-python#retrieve-key-and-endpoint).
 
 4. In a terminal, run:
+
    ```bash
    python quickstart.py YOUR_PROJECT_NAME  # Windows users may have to use `py` instead of `python`
    ```
+
+   **What does `quickstart.py` do?**
+
+   The quickstart script automates the entire setup process for you:
+
+   - Creates and activates a Python virtual environment
+   - Installs all required dependencies (using `uv` for faster installation, falling back to `pip`)
+   - Loads your `.env` configuration
+   - Sets up the Pulumi stack with your project name
+   - Runs `pulumi up` to deploy your application
+   - Displays your application URL when complete
+
+   This single command replaces all the manual steps described in the [advanced setup section](#setup-for-advanced-users).
+
    Python 3.9+ is required.
 
-Advanced users desiring control over virtual environment creation, dependency installation, environment variable setup,
-and `pulumi` invocation see [the advanced setup instructions](#setup-for-advanced-users).
-
+Advanced users desiring control over virtual environment creation, dependency installation, environment variable setup and `pulumi` invocation see [here](#setup-for-advanced-users).
 
 ## Architecture overview
 
 ![Guarded RAG architecture](https://s3.amazonaws.com/datarobot_public/drx/recipe_gifs/rag_architecture.svg)
 
-App templates contain three families of complementary logic. For Guarded RAG you can [opt-in](#make-changes) to fully 
+App templates contain three families of complementary logic. For Guarded RAG you can [opt-in](#make-changes) to fully
 custom RAG logic and a fully custom frontend or utilize DR's off the shelf offerings:
 
 - **AI logic**: Necessary to service AI requests and produce predictions and completions.
@@ -105,9 +139,9 @@ Each template provides an end-to-end AI architecture, from raw inputs to deploye
 
 1. Replace `assets/datarobot_english_documentation_docsassist.zip` with a new zip file containing .pdf, .docx,
    .md, or .txt documents ([example alternative docs here](https://s3.amazonaws.com/datarobot_public_datasets/ai_accelerators/acme_corp_company_policies_source_business_victoria_templates.zip)).
-3. Update the `rag_documents` setting in `infra/settings_main.py` to specify the local path to the
+2. Update the `rag_documents` setting in `infra/settings_main.py` to specify the local path to the
    new zip file.
-4. Run `pulumi up` to update your stack.
+3. Run `pulumi up` to update your stack.
    ```bash
    source set_env.sh  # On windows use `set_env.bat`
    pulumi up
@@ -115,25 +149,25 @@ Each template provides an end-to-end AI architecture, from raw inputs to deploye
 
 ### Change the LLM
 
-1. Modify the `LLM` setting in `infra/settings_generative.py` by changing `LLM=GlobalLLM.AZURE_OPENAI_GPT_4_O_MINI` to any other LLM from the `GlobalLLM` object. 
-     - Trial users: Please set `LLM=GlobalLLM.AZURE_OPENAI_GPT_4_O_MINI` since GPT-4o is not supported in the trial. Use the `OPENAI_API_DEPLOYMENT_ID` in `.env` to override which model is used in your azure organisation. You'll still see GPT 4o-mini in the playground, but the deployed app will use the provided azure deployment.  
+1. Modify the `LLM` setting in `infra/settings_generative.py` by changing `LLM=LLMs.AZURE_OPENAI_GPT_4_O` to any other LLM from the `LLMs` object.
+   - Trial users: Please set `LLM=LLMs.AZURE_OPENAI_GPT_4_O_MINI` since GPT-4o is not supported in the trial. Use the `OPENAI_API_DEPLOYMENT_ID` in `.env` to override which model is used in your Azure organization. You'll still see GPT 4o-mini in the playground, but the deployed app will use the provided Azure deployment.
 2. To use an existing TextGen model or deployment:
-      - In `infra/settings_generative.py`: Set `LLM=GlobalLLM.DEPLOYED_LLM`.
-      - In `.env`: Set either the `TEXTGEN_REGISTERED_MODEL_ID` or the `TEXTGEN_DEPLOYMENT_ID`
-      - In `.env`: Set `CHAT_MODEL_NAME` to the model name expected by the deployment (e.g. "claude-3-7-sonnet-20250219" for an anthropic deployment, "datarobot-deployed-llm" for NIM models )
+   - In `infra/settings_generative.py`: Set `LLM=LLMs.DEPLOYED_LLM`.
+   - In `.env`: Set either the `TEXTGEN_REGISTERED_MODEL_ID` or the `TEXTGEN_DEPLOYMENT_ID`
+   - In `.env`: Set `CHAT_MODEL_NAME` to the model name expected by the deployment (e.g. "claude-3-7-sonnet-20250219" for an anthropic deployment,"datarobot-deployed-llm" for NIM models )
 3. In `.env`: If not using an existing TextGen model or deployment, provide the required credentials dependent on your choice.
 4. Run `pulumi up` to update your stack (Or rerun your quickstart).
-      ```bash
-      source set_env.sh  # On windows use `set_env.bat`
-      pulumi up
-      ```
-
+   ```bash
+   source set_env.sh  # On windows use `set_env.bat`
+   pulumi up
+   ```
 
 > **⚠️ Availability information:**  
 > Using a NIM model requires custom model GPU inference, a premium feature. You will experience errors by using this type of model without the feature enabled. Contact your DataRobot representative or administrator for information on enabling this feature.
+
 ### Change the RAG prompt
 
-1. Modify the `system_prompt` variable in `infra/settings_generative.py` with your desired prompt. 
+1. Modify the `system_prompt` variable in `infra/settings_generative.py` with your desired prompt.
 2. If using [fully custom RAG logic](#fully-custom-rag-chunking-vectorization-and-retrieval), instead please change the `stuff_prompt` variable in `notebooks/build_rag.ipynb`.
 
 ### Fully custom front-end
@@ -154,9 +188,9 @@ Each template provides an end-to-end AI architecture, from raw inputs to deploye
    cd frontend
    streamlit run app.py
    ```
-   
 
 ### Fully custom RAG chunking, vectorization, and retrieval
+
 1. Install additional requirements (e.g. FAISS, HuggingFace).
    ```bash
    source set_env.sh  # On windows use `set_env.bat`
@@ -175,6 +209,7 @@ Each template provides an end-to-end AI architecture, from raw inputs to deploye
    source set_env.sh  # On windows use `set_env.bat`
    pulumi up
    ```
+
 ## Share results
 
 1. Log into the DataRobot application.
@@ -182,12 +217,15 @@ Each template provides an end-to-end AI architecture, from raw inputs to deploye
 3. Navigate to the application you want to share, open the actions menu, and select **Share** from the dropdown.
 
 ## Delete all provisioned resources
+
 ```bash
 pulumi down
 ```
 
 ## Setup for advanced users
+
 For manual control over the setup process adapt the following steps for MacOS/Linux to your environent:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
@@ -196,7 +234,9 @@ source set_env.sh
 pulumi stack init YOUR_PROJECT_NAME
 pulumi up
 ```
+
 e.g. for Windows/conda/cmd.exe this would be:
+
 ```bash
 conda create --prefix .venv pip
 conda activate .\.venv
@@ -205,7 +245,9 @@ set_env.bat
 pulumi stack init YOUR_PROJECT_NAME
 pulumi up
 ```
+
 For projects that will be maintained, DataRobot recommends forking the repo so upstream fixes and improvements can be merged in the future.
 
 ## Data Privacy
+
 Your data privacy is important to us. Data handling is governed by the DataRobot [Privacy Policy](https://www.datarobot.com/privacy/), please review before using your own data with DataRobot.
