@@ -10,17 +10,15 @@ jobs:
   python-static-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: actions/checkout@v6
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install -r requirements.txt
+        run: uv sync --extra dev
       - name: Run Static Checks
         run: |
-          ruff format --check .
-          ruff check .
-          mypy --pretty .
+          uv run ruff format --check .
+          uv run ruff check .
+          uv run mypy --pretty .

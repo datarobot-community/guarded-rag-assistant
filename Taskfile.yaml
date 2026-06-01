@@ -1,0 +1,16 @@
+---
+version: "3"
+dotenv: [".env", ".env.{{.ENV}}"]
+tasks:
+  default:
+    desc: "ℹ️ Show all available tasks (run `task --list-all` to see hidden tasks)"
+    cmds:
+      - task --list --sort none
+    silent: true
+
+  start:
+    desc: "🚀 Quickstart"
+    cmds:
+      - dr self update
+      - dr dotenv setup --if-needed
+      - python quickstart.py

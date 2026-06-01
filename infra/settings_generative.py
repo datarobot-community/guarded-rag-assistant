@@ -51,7 +51,7 @@ from .settings_main import (
     runtime_environment_moderations,
 )
 
-LLM = LLMs.AZURE_OPENAI_GPT_4_O_MINI
+LLM = LLMs.AZURE_OPENAI_GPT_4_O
 
 
 custom_model_args = CustomModelArgs(
@@ -112,18 +112,19 @@ if core.rag_type == RAGType.DR:
                 You will be given extracts from the document(s) to help answer the question.
 
                 Try to use information within the sources. Don't use citations.
+                Keep your response concise — aim for 3-5 sentences unless the question clearly requires more detail.
                 """
 
     llm_blueprint_args = LLMBlueprintArgs(
         resource_name=f"Guarded RAG LLM Blueprint [{project_name}]",
         llm_id=LLM.name,
         llm_settings=LLMSettings(
-            max_completion_length=512,
+            max_completion_length=2048,
             system_prompt=textwrap.dedent(gettext(system_prompt)),
         ),
         vector_database_settings=VectorDatabaseSettings(
             max_documents_retrieved_per_prompt=10,
-            max_tokens=512,
+            max_tokens=2048,
         ),
     )
 

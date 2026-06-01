@@ -39,6 +39,10 @@ from docsassist.schema import RAGOutput, RAGType
 
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
 
+from telemetry import init_telemetry, span  # noqa: E402
+
+init_telemetry()
+
 
 DATAROBOT_ENDPOINT = os.getenv("DATAROBOT_ENDPOINT")
 DATAROBOT_API_KEY = os.getenv("DATAROBOT_API_TOKEN")
@@ -316,12 +320,18 @@ def main() -> None:
         st.session_state.prompt_sent = True
         render_message(chat_container, prompt, True)
         with st.spinner(gettext("Getting AI response...")):
-            # Pass metadata filters to the RAG completion (only for DR RAG)
-            response = predict.get_rag_completion(
-                question=prompt,
-                messages=st.session_state.messages,
-                metadata_filter=metadata_filters if metadata_filters else None,
-            )
+            with span(
+                "rag_completion",
+                question_length=len(prompt),
+                history_length=len(st.session_state.messages),
+                has_metadata_filter=bool(metadata_filters),
+            ):
+                # Pass metadata filters to the RAG completion (only for DR RAG)
+                response = predict.get_rag_completion(
+                    question=prompt,
+                    messages=st.session_state.messages,
+                    metadata_filter=metadata_filters if metadata_filters else None,
+                )
         st.session_state.response = response
         st.session_state.messages.extend(
             [

@@ -177,3 +177,9 @@ Pulumi.*.yaml
 
 
 **/e2e/test_results/*
+
+# dr setup
+.datarobot/cli/state.yaml
+
+**/node_modules/
+tests/e2e/artifacts/

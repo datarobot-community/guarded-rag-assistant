@@ -5,7 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [11.8.0] - 2026-04-30
+
+### Added
+
+- DataRobot CLI integration: Introduced CLI-driven quickstart and configuration via `dr start`.
+- E2E testing tooling: ESLint + Prettier for Cypress tests, Taskfile with `install`, `lint`, and `lint-fix` tasks.
+- GitHub Actions CI workflow for e2e static checks (lint + format) triggered on changes to `tests/e2e/**`.
+- System prompt instruction to keep LLM responses concise.
+- uv dependency managemement migration
+
+### Changed
+
+- LLM changed from `azure-openai-gpt-4-o-mini` (retired 2026-03-31) to `azure-openai-gpt-4-o`.
+- Raised `max_completion_length` from 512 → 2048 to avoid response truncation on longer answers.
+- Raised VDB `max_tokens` from 512 → 2048 to support longer retrieved context chunks.
+- Upgraded Cypress from 13.x to 14.5.2.
+
+### Fixed
+
+- Removed dead `get_tracer()` function from `frontend/telemetry.py`.
+- Fixed unsafe Cypress command chaining in `sendChatMessage` test helper (`cypress/unsafe-to-chain-command`).
+
+### Improvements
+
+- Updated `README.md` to prioritize CLI-based quickstart (`dr start`), improved setup flow and Codespace instructions.
 
 ## [0.2.2] - 2025-11-19
 

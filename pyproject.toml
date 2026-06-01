@@ -1,3 +1,56 @@
+[project]
+name = "docsassist"
+version = "0.4.2"
+description = "Guarded RAG Assistant — DataRobot application template"
+requires-python = ">=3.10, <3.13"
+
+dependencies = [
+    "pulumi==3.153.0",
+    "pulumi-datarobot>=0.10.22",
+    "datarobot-pulumi-utils>=0.0.2.post3,<0.1",
+    "datarobot>=3.9.1,<4.0.0",
+    "datarobot-predict>=1.9.6,<1.10",
+    "pydantic>=2.9.2,<2.10",
+    "pydantic-settings>=2.5.2,<2.6",
+    "eval_type_backport>=0.2.0,<0.3",
+    # Constrained by datarobot-drum
+    "pandas>=2.0.3,<3",
+    "streamlit>=1.39.0,<2",
+    "st-theme>=1.2.3,<2",
+    "joblib>=1.4.2,<2",
+    "openai>=1.47.1,<2",
+    "jupyterlab>=4.2.5,<5",
+    "papermill>=2.6.0,<3",
+    "babel>=2.16,<3",
+    "google-auth",
+    "boto3",
+    "boto3-stubs",
+    "opentelemetry-api>=1.22.0",
+    "opentelemetry-sdk>=1.22.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.22.0",
+    "opentelemetry-instrumentation-httpx>=0.43b0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.3",
+    "mypy==1.11.2",
+    "types-PyYAML==6.0.12.20250809",
+    "ruff==0.6.9",
+    "pandas-stubs>=2.2.3.250308",
+]
+rag-diy = [
+    # Constrained by moderations dependencies
+    "langchain<0.3",
+    "langchain-openai<0.2",
+    "langchain-community<0.3",
+    "langchain-huggingface<0.1",
+    "transformers==4.49.0",  # https://github.com/huggingface/transformers/issues/37311
+    "faiss-cpu>=1.8.0,<1.9",
+    "opencv-contrib-python-headless>=4.8.1.78,<5",
+    "unstructured[all-docs]>=0.16.3,<0.17",
+]
+
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -80,6 +133,7 @@ docstring-code-line-length = "dynamic"
 
 [tool.mypy]
 plugins = "pydantic.mypy"
+mypy_path = ["frontend"]
 strict = true
 exclude = """(?x)(
     output/ # exclude files starting with "output"
@@ -124,3 +178,6 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 norecursedirs = "tests/e2e"
+
+[tool.uv]
+package = false

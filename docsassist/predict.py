@@ -101,10 +101,16 @@ def get_rag_completion(
             + [ChatCompletionUserMessageParam(content=question, role="user")],
         )
 
-    rag_output = RAGOutput(
-        completion=str(response.choices[0].message.content),
+    content = response.choices[0].message.content
+    logger.info(
+        "RAG completion: deployment=%s empty=%s citations=%d",
+        deployment_id,
+        not content,
+        len(getattr(response, "citations", [])),
+    )
+
+    return RAGOutput(
+        completion=str(content),
         references=getattr(response, "citations", []),
         question=question,
     )
-
-    return rag_output

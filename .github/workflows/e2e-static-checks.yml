@@ -1,0 +1,27 @@
+---
+name: E2E Static Checks
+
+on:
+  push:
+    paths:
+      - 'tests/e2e/**'
+
+jobs:
+  e2e-static-checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tests/e2e
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: tests/e2e/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Static Checks
+        run: |
+          npm run lint
+          npm run format:check

@@ -112,7 +112,12 @@ def is_conda_environment():
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Infrastructure management script")
-    parser.add_argument("stack_name", help="Stack name to use")
+    parser.add_argument(
+        "stack_name",
+        nargs="?",
+        default=None,
+        help="Stack name to use",
+    )
     parser.add_argument(
         "--action",
         choices=["up", "destroy"],
@@ -193,17 +198,10 @@ def setup_virtual_environment() -> None:
     try:
         # Handle activation and package installation
 
-        try:
+        if is_datarobot_codespace():
             run_subprocess_in_venv(["pip", "install", "-U", "uv"])
-            if is_datarobot_codespace():
-                os.system("uv pip install $(pip freeze | grep ipykernel)")
-            # Install requirements using uv
-            run_subprocess_in_venv(["uv", "pip", "install", "-r", "requirements.txt"])
-        except Exception as e:
-            print(f"UV installation/usage failed: {e}")
-            print("Falling back to pip")
-
-            run_subprocess_in_venv(["pip", "install", "-r", "requirements.txt"])
+            os.system("uv pip install $(pip freeze | grep ipykernel)")
+        run_subprocess_in_venv(["uv", "sync"])
 
     except subprocess.CalledProcessError as e:
         print(f"Error during virtual environment setup: {e}")
@@ -286,10 +284,26 @@ def print_app_url():
 
 def main():
     args = parse_args()
-    if args.stack_name == "YOUR_PROJECT_NAME":
+    check_dotenv_exists()
+
+    # Prompt for stack_name if not provided
+    stack_name = args.stack_name
+    if not stack_name:
+        try:
+            stack_name = input("Please enter a stack name: ").strip()
+        except EOFError:
+            print(
+                "Error: No stack name provided and input() is not available (non-interactive environment). Please provide the stack_name as a command-line argument."
+            )
+            sys.exit(1)
+        if not stack_name:
+            print("Stack name cannot be empty")
+            sys.exit(1)
+
+    if stack_name == "YOUR_PROJECT_NAME":
         print("Please use a different project name")
         sys.exit(0)
-    check_dotenv_exists()
+
     # Load environment variables
     env_vars = load_dotenv()
 
@@ -301,7 +315,7 @@ def main():
         create_virtual_environment()
     setup_virtual_environment()
     # Setup Pulumi configuration
-    setup_pulumi_config(work_dir, args.stack_name, env_vars)
+    setup_pulumi_config(work_dir, stack_name, env_vars)
 
     # Refresh the stack
     print("\nRefreshing stack...")
