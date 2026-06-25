@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.10.1] - 2026-06-23
+
+### Changed
+
+- Dropped Python 3.10 (EOL) and added Python 3.13 support; supported range is now 3.11–3.13.
+- Updated dependency versions.
+
 ## [11.8.0] - 2026-04-30
 
 ### Added

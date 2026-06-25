@@ -1,5 +1,5 @@
-pydantic>=2.9.2,<2.10
-pydantic-settings>=2.5.2,<2.6
+pydantic>=2.9.2,<2.14
+pydantic-settings>=2.5.2,<2.15
 eval_type_backport>=0.2.0,<0.3
 
 # Constrained by moderations dependencies

@@ -51,7 +51,7 @@ from .settings_main import (
     runtime_environment_moderations,
 )
 
-LLM = LLMs.AZURE_OPENAI_GPT_4_O
+LLM = LLMs.AZURE_OPENAI_GPT_5_MINI
 
 
 custom_model_args = CustomModelArgs(

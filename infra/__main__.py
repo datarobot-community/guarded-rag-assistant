@@ -14,7 +14,9 @@
 import os
 import pathlib
 import sys
+from typing import Any
 
+import datarobot as dr
 import papermill as pm
 import pulumi
 import pulumi_datarobot as datarobot
@@ -24,6 +26,9 @@ from datarobot_pulumi_utils.pulumi.custom_model_deployment import CustomModelDep
 from datarobot_pulumi_utils.pulumi.proxy_llm_blueprint import ProxyLLMBlueprint
 from datarobot_pulumi_utils.schema.apps import ApplicationTemplates
 from datarobot_pulumi_utils.schema.llms import LLMs
+from datarobotx.idp.custom_model_versions import (
+    _unsafe_get_or_create_custom_model_version_from_previous as get_or_create_custom_model_version_from_previous,
+)
 
 sys.path.append("..")
 
@@ -123,6 +128,49 @@ guard_configurations = [
     )
 ] + settings_guardrails.guardrails
 
+
+def merge_runtime_parameter_values_and_create_version(
+    custom_model_id: str,
+    base_version_id: str,
+    credential_overrides: list[dict[str, Any]],
+) -> str:
+    """Create a custom model version that combines the blueprint-generated default runtime
+    parameters with the supplied credential runtime parameter values.
+
+    DataRobot's "create version from previous" keeps only the runtime parameters that are
+    explicitly supplied, so we read the full set off the blueprint-generated version and
+    re-supply all of them, overriding just the credential parameters.
+    """
+    client = dr.client.get_client()
+    base_version = dr.CustomModelVersion.get(custom_model_id, base_version_id)
+
+    overrides_by_name = {ov["field_name"]: ov for ov in credential_overrides}
+    merged_runtime_parameter_values: list[dict[str, Any]] = []
+    for runtime_parameter in base_version.runtime_parameters or []:
+        if runtime_parameter.field_name in overrides_by_name:
+            merged_runtime_parameter_values.append(
+                overrides_by_name[runtime_parameter.field_name]
+            )
+        elif runtime_parameter.current_value is not None:
+            merged_runtime_parameter_values.append(
+                {
+                    "field_name": runtime_parameter.field_name,
+                    "type": runtime_parameter.type,
+                    "value": runtime_parameter.current_value,
+                }
+            )
+
+    return str(
+        get_or_create_custom_model_version_from_previous(
+            endpoint=client.endpoint,
+            token=client.token,
+            custom_model_id=custom_model_id,
+            base_environment_id=base_version.base_environment_id,
+            runtime_parameter_values=merged_runtime_parameter_values,
+        )
+    )
+
+
 if settings_main.core.rag_type == RAGType.DR:
     dataset = datarobot.DatasetFromFile(
         use_case_ids=[use_case.id],
@@ -180,14 +228,15 @@ if settings_main.core.rag_type == RAGType.DR:
             **settings_generative.llm_blueprint_args.model_dump(),
         )
 
+    # Create from the blueprint WITHOUT runtime_parameter_values: passing them makes the
+    # provider create a blueprint-detached version that keeps only the passed params and
+    # drops every blueprint default (incl. DEVICE_FOR_NEURAL_NETWORK_COMPUTATIONS). When
+    # credentials are configured they are merged onto the full default set below instead.
     rag_custom_model = datarobot.CustomModel(
         **settings_generative.custom_model_args.model_dump(exclude_none=True),
         use_case_ids=[use_case.id],
         source_llm_blueprint_id=llm_blueprint.id,
         guard_configurations=guard_configurations,
-        runtime_parameter_values=[]
-        if settings_generative.LLM == LLMs.DEPLOYED_LLM
-        else credential_runtime_parameter_values,
     )
 
 elif settings_main.core.rag_type == RAGType.DIY:
@@ -226,9 +275,41 @@ elif settings_main.core.rag_type == RAGType.DIY:
 else:
     raise NotImplementedError(f"Unknown RAG type: {settings_main.core.rag_type}")
 
+
+# When LLM credentials are configured on a blueprint-sourced model, supplying them at
+# creation drops the blueprint's default runtime parameters. Instead, merge the credentials
+# onto the full default set in a follow-on version. (The DIY path ships its own
+# model-metadata file, so it is unaffected and uses its version directly.)
+if (
+    settings_main.core.rag_type == RAGType.DR
+    and settings_generative.LLM != LLMs.DEPLOYED_LLM
+    and credential_runtime_parameter_values
+):
+    credential_overrides = pulumi.Output.all(
+        *[param.value for param in credential_runtime_parameter_values]
+    ).apply(
+        lambda values: [
+            {"field_name": param.key, "type": param.type, "value": value}
+            for param, value in zip(credential_runtime_parameter_values, values)
+        ]
+    )
+    rag_custom_model_version_id = pulumi.Output.all(
+        custom_model_id=rag_custom_model.id,
+        base_version_id=rag_custom_model.version_id,
+        credential_overrides=credential_overrides,
+    ).apply(
+        lambda resolved: merge_runtime_parameter_values_and_create_version(
+            custom_model_id=resolved["custom_model_id"],
+            base_version_id=resolved["base_version_id"],
+            credential_overrides=resolved["credential_overrides"],
+        )
+    )
+else:
+    rag_custom_model_version_id = rag_custom_model.version_id
+
 rag_deployment = CustomModelDeployment(
     resource_name=f"Guarded RAG Deploy [{settings_main.project_name}]",
-    custom_model_version_id=rag_custom_model.version_id,
+    custom_model_version_id=rag_custom_model_version_id,
     registered_model_args=settings_generative.registered_model_args,
     prediction_environment=prediction_environment,
     deployment_args=settings_generative.deployment_args,

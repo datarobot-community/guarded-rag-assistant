@@ -9,12 +9,15 @@ on:
 jobs:
   python-static-checks:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Setup uv
         uses: astral-sh/setup-uv@v7
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: uv sync --extra dev
       - name: Run Static Checks

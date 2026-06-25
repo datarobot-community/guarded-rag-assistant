@@ -2,16 +2,16 @@
 name = "docsassist"
 version = "0.4.2"
 description = "Guarded RAG Assistant — DataRobot application template"
-requires-python = ">=3.10, <3.13"
+requires-python = ">=3.11, <3.14"
 
 dependencies = [
-    "pulumi==3.153.0",
-    "pulumi-datarobot>=0.10.22",
-    "datarobot-pulumi-utils>=0.0.2.post3,<0.1",
+    "pulumi>=3.153.0,<4",
+    "pulumi-datarobot>=0.10.30,<0.11",
+    "datarobot-pulumi-utils>=0.1.6,<0.2",
     "datarobot>=3.9.1,<4.0.0",
-    "datarobot-predict>=1.9.6,<1.10",
-    "pydantic>=2.9.2,<2.10",
-    "pydantic-settings>=2.5.2,<2.6",
+    "datarobot-predict>=1.9.6,<1.11",
+    "pydantic>=2.9.2,<2.14",
+    "pydantic-settings>=2.5.2,<2.15",
     "eval_type_backport>=0.2.0,<0.3",
     # Constrained by datarobot-drum
     "pandas>=2.0.3,<3",
@@ -22,6 +22,7 @@ dependencies = [
     "jupyterlab>=4.2.5,<5",
     "papermill>=2.6.0,<3",
     "babel>=2.16,<3",
+    "datarobotx-idp>=0.2.19",
     "google-auth",
     "boto3",
     "boto3-stubs",
@@ -34,10 +35,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=9.0.3",
-    "mypy==1.11.2",
-    "types-PyYAML==6.0.12.20250809",
-    "ruff==0.6.9",
-    "pandas-stubs>=2.2.3.250308",
+    "mypy==2.1.0",
+    "types-PyYAML==6.0.12.20260518",
+    "ruff==0.15.18",
+    "pandas-stubs>=3.0.3.260530",
 ]
 rag-diy = [
     # Constrained by moderations dependencies
@@ -174,6 +175,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]] # streamlit_theme is untyped
 module = "streamlit_theme.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]] # datarobotx is untyped
+module = "datarobotx.*"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

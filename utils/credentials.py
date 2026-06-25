@@ -168,35 +168,41 @@ def get_credentials(
                         LLMs.AZURE_OPENAI_GPT_4_O.name: "gpt-4o",
                         LLMs.AZURE_OPENAI_GPT_4_O_MINI.name: "gpt-4o-mini",
                         LLMs.AZURE_OPENAI_GPT_4_TURBO.name: "gpt-4-turbo",
+                        LLMs.AZURE_OPENAI_GPT_5_MINI.name: "gpt-5-mini",
                     }
+                    expected_deployment = lookup.get(llm.name)
                     if (
-                        credentials.azure_deployment is not None
-                        and credentials.azure_deployment != lookup[llm.name]
+                        expected_deployment is not None
+                        and credentials.azure_deployment is not None
+                        and credentials.azure_deployment != expected_deployment
                     ):
                         pulumi.warn(
                             textwrap.dedent(f"""\
                                 Environment variable OPENAI_API_DEPLOYMENT_ID doesn't match the LLM Blueprint specified in settings_generative.py.
 
                                 LLM Blueprint specified in settings_generative.py: {llm.name}
-                                Expected:\tOPENAI_API_DEPLOYMENT_ID="{lookup[llm.name]}"
+                                Expected:\tOPENAI_API_DEPLOYMENT_ID="{expected_deployment}"
                                 Current:\tOPENAI_API_DEPLOYMENT_ID="{credentials.azure_deployment}"
                                 """)
                         )
                     openai_client = openai.AzureOpenAI(
                         azure_endpoint=credentials.azure_endpoint,
                         azure_deployment=credentials.azure_deployment
-                        or lookup[llm.name],
+                        or expected_deployment
+                        or llm.name,
                         api_key=credentials.api_key,
                         api_version=credentials.api_version or "2023-05-15",
                     )
                     openai_client.chat.completions.create(
-                        model=llm.name,
+                        model=credentials.azure_deployment
+                        or expected_deployment
+                        or llm.name,
                         messages=[{"role": "user", "content": "Hello"}],
                     )
                 except Exception as e:
                     raise ValueError(
                         textwrap.dedent(f"""\
-                            Unable to run a successful test completion against deployment '{credentials.azure_deployment or lookup[llm.name]}'
+                            Unable to run a successful test completion against deployment '{credentials.azure_deployment or expected_deployment or llm.name}'
                             on '{credentials.azure_endpoint}' with API version '{credentials.api_version or "2023-05-15"}'
                             with provided Azure OpenAI credentials. Please validate your credentials.
 
@@ -219,7 +225,8 @@ def get_credentials(
                 try:
                     import boto3
 
-                    if "anthropic" in lookup[llm.name]:
+                    model_id = lookup.get(llm.name, llm.name)
+                    if "anthropic" in model_id:
                         request_body = {
                             "anthropic_version": "bedrock-2023-05-31",
                             "messages": [{"role": "user", "content": "Hello"}],
@@ -239,14 +246,14 @@ def get_credentials(
                     bedrock_client.invoke_model(
                         accept="application/json",
                         contentType="application/json",
-                        modelId=lookup[llm.name],
+                        modelId=model_id,
                         body=json.dumps(request_body),
                     )
 
                 except Exception as e:
                     raise ValueError(
                         textwrap.dedent(f"""
-                            Unable to run a successful test completion against model '{lookup[llm.name]}' in region '{credentials.region_name or "us-west-1"}'
+                            Unable to run a successful test completion against model '{model_id}' in region '{credentials.region_name or "us-west-1"}'
                             using request body '{request_body}' with provided AWS credentials.
 
                             Please validate your credentials or check {__file__} for details.
@@ -278,19 +285,20 @@ def get_credentials(
                     # OpenAI Client
                     base_url = f"https://{credentials.region}-aiplatform.googleapis.com/v1beta1/projects/{google_credentials.project_id}/locations/{credentials.region}/endpoints/openapi"
 
+                    model_id = lookup.get(llm.name, llm.name)
                     google_client = openai.OpenAI(
                         base_url=base_url,
                         api_key=google_credentials.token,
                     )
                     google_client.chat.completions.create(
-                        model=f"google/{lookup[llm.name]}",
+                        model=f"google/{model_id}",
                         messages=[{"role": "user", "content": "Why is the sky blue?"}],
                     )
 
                 except Exception as e:
                     raise ValueError(
                         textwrap.dedent(f"""
-                            Unable to run a successful test completion against model '{lookup[llm.name]}' in region '{credentials.region}'
+                            Unable to run a successful test completion against model '{model_id}' in region '{credentials.region}'
                             using base url '{base_url}'
                             with provided Google Cloud credentials.
 
