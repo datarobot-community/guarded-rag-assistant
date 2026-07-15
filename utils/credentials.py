@@ -28,7 +28,40 @@ from docsassist.credentials import (
     DRCredentials,
     GoogleCredentials,
 )
+from docsassist.schema import PROMPT_COLUMN_NAME
 from infra.settings_main import project_name
+
+
+def get_blueprint_runtime_parameters(
+    llm_blueprint_id: pulumi.Input[str],
+    playground_id: pulumi.Input[str],
+    llm_id: pulumi.Input[str],
+) -> list[datarobot.CustomModelRuntimeParameterValueArgs]:
+    """Return the runtime parameters an LLM-blueprint custom model needs to load and serve.
+
+    Creating a custom model from a blueprint with a *partial* `runtime_parameter_values` set
+    makes the provider keep only the supplied parameters and drop every other blueprint default,
+    including DRUM system parameters such as `DEVICE_FOR_NEURAL_NETWORK_COMPUTATIONS` that the
+    model requires to load. Restate the full default set here so callers can submit it explicitly
+    (alongside credential parameters) instead of relying on a partial submission.
+    """
+    Arg = datarobot.CustomModelRuntimeParameterValueArgs
+    return [
+        Arg(key="PROMPT_COLUMN_NAME", type="string", value=PROMPT_COLUMN_NAME),
+        Arg(key="LLM_BLUEPRINT_ID", type="string", value=llm_blueprint_id),
+        Arg(
+            key="LLM_BLUEPRINT_ID_COLUMN_NAME", type="string", value="LLM_BLUEPRINT_ID"
+        ),
+        Arg(key="ENABLE_LLM_BLUEPRINT_ID_COLUMN", type="boolean", value="true"),
+        Arg(key="LLM_ID", type="string", value=llm_id),
+        Arg(key="PLAYGROUND_ID", type="string", value=playground_id),
+        Arg(key="DEVICE_FOR_NEURAL_NETWORK_COMPUTATIONS", type="string", value="cpu"),
+        Arg(key="CUSTOM_MODEL_WORKERS", type="numeric", value="1"),
+        Arg(key="DRUM_SERVER_TYPE", type="string", value="gunicorn"),
+        Arg(key="DRUM_GUNICORN_WORKER_CLASS", type="string", value="sync"),
+        Arg(key="DRUM_WORKER_CONNECTIONS", type="numeric", value="100"),
+        Arg(key="DRUM_CLIENT_REQUEST_TIMEOUT", type="numeric", value="300"),
+    ]
 
 
 def get_credential_runtime_parameter_values(

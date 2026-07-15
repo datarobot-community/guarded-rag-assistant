@@ -25,12 +25,12 @@ from langchain.chains.history_aware_retriever import (
     create_history_aware_retriever,
 )
 from langchain.chains.retrieval import create_retrieval_chain
-from langchain.schema.runnable import Runnable
 from langchain_community.vectorstores.faiss import FAISS
 from langchain_core.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder,
 )
+from langchain_core.runnables import Runnable
 from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_huggingface import (
     HuggingFaceEmbeddings,

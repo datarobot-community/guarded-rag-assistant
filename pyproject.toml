@@ -22,7 +22,6 @@ dependencies = [
     "jupyterlab>=4.2.5,<5",
     "papermill>=2.6.0,<3",
     "babel>=2.16,<3",
-    "datarobotx-idp>=0.2.19",
     "google-auth",
     "boto3",
     "boto3-stubs",
@@ -41,15 +40,17 @@ dev = [
     "pandas-stubs>=3.0.3.260530",
 ]
 rag-diy = [
-    # Constrained by moderations dependencies
-    "langchain<0.3",
-    "langchain-openai<0.2",
-    "langchain-community<0.3",
-    "langchain-huggingface<0.1",
+    # Upgraded to langchain 0.3.x to clear CVE-2025-68664 (langchain-core) and
+    # related advisories (APP-6536). The DIY RAG model still deploys against the
+    # PYTHON_312_MODERATIONS base env via deployment_diy_rag/requirements.txt.
+    "langchain>=0.3.27,<0.4",
+    "langchain-openai>=0.2,<0.4",
+    "langchain-community>=0.3.27,<0.4",
+    "langchain-huggingface>=0.1,<0.4",
     "transformers==4.49.0",  # https://github.com/huggingface/transformers/issues/37311
     "faiss-cpu>=1.8.0,<1.9",
     "opencv-contrib-python-headless>=4.8.1.78,<5",
-    "unstructured[all-docs]>=0.16.3,<0.17",
+    "unstructured[all-docs]>=0.18.18,<0.19",
 ]
 
 [tool.ruff]
@@ -175,10 +176,6 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]] # streamlit_theme is untyped
 module = "streamlit_theme.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]] # datarobotx is untyped
-module = "datarobotx.*"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

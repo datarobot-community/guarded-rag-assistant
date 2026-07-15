@@ -19,10 +19,10 @@ import traceback
 from dataclasses import dataclass
 from typing import Any, Dict, List, Union
 
-from langchain.schema import AIMessage, BaseMessage, HumanMessage
-from langchain.schema.runnable import Runnable
 from langchain_community.callbacks import get_openai_callback
 from langchain_core.documents import Document
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+from langchain_core.runnables import Runnable
 from openai.types.chat import ChatCompletion
 from openai.types.chat.chat_completion import Choice
 

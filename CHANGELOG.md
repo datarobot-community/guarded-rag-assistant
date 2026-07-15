@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.10.2] - 2026-07-15
+
+### Fixed
+
+- Generative LLM custom models now submit the full blueprint/DRUM default runtime parameter set explicitly alongside credentials, replacing the previous read-modify-write version merge. The merge only worked when the existing version still carried the defaults, so a deployment already broken by a partial submission couldn't self-repair; explicit submission fixes it on the next `pulumi up`.
+
+### Removed
+
+- Removed the `datarobotx-idp`-based custom model version merge helper from `infra/__main__.py`, no longer needed now that the full parameter set is submitted directly. Since that was the only remaining use of `datarobotx-idp` in this repo, the dependency itself is also removed.
+
+### Security
+
+- Upgraded the `rag-diy` extra to LangChain 0.3.x (`langchain`, `langchain-community`,
+  `langchain-openai`, `langchain-huggingface`) and `unstructured` to 0.18.x, resolving the
+  Critical `langchain-core` (CVE-2025-68664) and `unstructured` (CVE-2025-64712) advisories plus
+  related Highs (APP-6536). Remaining Highs with no adoptable fix are risk-accepted in
+  `trivy-ignore.rego`.
+
 ## [11.10.1] - 2026-06-23
 
 ### Changed
