@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [11.12.0] - 2026-09-01
+
+### Removed
+
+- Reverted the LLM runtime-parameter workarounds (#318, #321). DataRobot 11.12 preserves
+  blueprint-default runtime parameters at the platform level (RAPTOR-18633), so the template
+  no longer needs to submit the full blueprint/DRUM default parameter set explicitly; LLM
+  credential runtime parameters are passed directly at custom model creation again.
+
 ## [11.10.2] - 2026-07-15
 
 ### Fixed

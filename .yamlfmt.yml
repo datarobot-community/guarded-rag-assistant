@@ -7,3 +7,4 @@ formatter:
   max_line_length: 120
 exclude:
   - .datarobot/
+  - .harness/e2e/pipeline.yml

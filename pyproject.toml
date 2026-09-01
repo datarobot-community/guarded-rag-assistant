@@ -82,6 +82,9 @@ exclude = [
   "node_modules",
   "site-packages",
   "venv",
+  # Copier-managed from af-component-e2e-tests; keep byte-identical to
+  # upstream rather than reformatting to this repo's own style.
+  ".harness/scripts",
 ]
 
 # Same as Black.
@@ -146,6 +149,7 @@ exclude = """(?x)(
     | .cache
     | tests/
     | e2e/
+    | .harness/scripts/
   )"""
 python_version = "3.11"
 untyped_calls_exclude = "google"

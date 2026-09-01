@@ -42,11 +42,7 @@ from infra import (
 )
 from infra.settings_global_model_guardrails import global_guardrails
 from infra.settings_proxy_llm import CHAT_MODEL_NAME
-from utils.credentials import (
-    get_blueprint_runtime_parameters,
-    get_credential_runtime_parameter_values,
-    get_credentials,
-)
+from utils.credentials import get_credential_runtime_parameter_values, get_credentials
 
 TEXTGEN_DEPLOYMENT_ID = os.environ.get("TEXTGEN_DEPLOYMENT_ID")
 TEXTGEN_REGISTERED_MODEL_ID = os.environ.get("TEXTGEN_REGISTERED_MODEL_ID")
@@ -127,7 +123,6 @@ guard_configurations = [
     )
 ] + settings_guardrails.guardrails
 
-
 if settings_main.core.rag_type == RAGType.DR:
     dataset = datarobot.DatasetFromFile(
         use_case_ids=[use_case.id],
@@ -185,36 +180,14 @@ if settings_main.core.rag_type == RAGType.DR:
             **settings_generative.llm_blueprint_args.model_dump(),
         )
 
-    rag_runtime_parameter_values: (
-        list[datarobot.CustomModelRuntimeParameterValueArgs] | None
-    ) = None
-    if (
-        settings_generative.LLM != LLMs.DEPLOYED_LLM
-        and credential_runtime_parameter_values
-    ):
-        # Supply the FULL runtime parameter set explicitly. Passing a partial set (e.g. only the
-        # credentials) makes the provider drop every blueprint default that isn't restated,
-        # including DRUM system parameters such as DEVICE_FOR_NEURAL_NETWORK_COMPUTATIONS that the
-        # model requires to load. Restating the full blueprint/DRUM default set alongside the
-        # credentials keeps the model healthy and also repairs models a previous partial
-        # submission had already wiped. Deployed LLMs handle credentials via the proxy
-        # deployment, so they keep the blueprint-generated defaults by omitting
-        # runtime_parameter_values entirely.
-        rag_runtime_parameter_values = [
-            *get_blueprint_runtime_parameters(
-                llm_blueprint_id=llm_blueprint.id,
-                playground_id=playground.id,
-                llm_id=settings_generative.llm_blueprint_args.llm_id,
-            ),
-            *credential_runtime_parameter_values,
-        ]
-
     rag_custom_model = datarobot.CustomModel(
         **settings_generative.custom_model_args.model_dump(exclude_none=True),
         use_case_ids=[use_case.id],
         source_llm_blueprint_id=llm_blueprint.id,
         guard_configurations=guard_configurations,
-        runtime_parameter_values=rag_runtime_parameter_values,
+        runtime_parameter_values=[]
+        if settings_generative.LLM == LLMs.DEPLOYED_LLM
+        else credential_runtime_parameter_values,
     )
 
 elif settings_main.core.rag_type == RAGType.DIY:
@@ -252,7 +225,6 @@ elif settings_main.core.rag_type == RAGType.DIY:
     )
 else:
     raise NotImplementedError(f"Unknown RAG type: {settings_main.core.rag_type}")
-
 
 rag_deployment = CustomModelDeployment(
     resource_name=f"Guarded RAG Deploy [{settings_main.project_name}]",
