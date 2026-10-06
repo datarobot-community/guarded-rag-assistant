@@ -1,3 +1,6 @@
+> [!WARNING]
+> **This template is no longer supported and will be archived.** Please do not use it for new projects.
+
 # Guarded RAG Assistant
 <p align="center">
   <a href="https://app.datarobot.com/usecases/application-templates/66df7eab3168a83282cf4ad7?referrerUrl=github">
@@ -46,10 +49,11 @@ In addition to creating a hosted, shareable user interface, the guarded RAG assi
    - [Change the RAG prompt](#change-the-RAG-prompt)
    - [Custom front-end](#fully-custom-front-end)
    - [Custom RAG logic](#fully-custom-rag-chunking-vectorization-and-retrieval)
-5. [Share results](#share-results)
-6. [Delete all provisioned resources](#delete-all-provisioned-resources)
-7. [Setup for advanced users](#setup-for-advanced-users)
-8. [Data Privacy](#data-privacy)
+5. [Testing](#testing)
+6. [Share results](#share-results)
+7. [Delete all provisioned resources](#delete-all-provisioned-resources)
+8. [Setup for advanced users](#setup-for-advanced-users)
+9. [Data Privacy](#data-privacy)
 
 ## 🚀 Quick start
 
@@ -299,6 +303,41 @@ If the LLM you want to use isn't already defined in the `LLMs` object, you can r
    source set_env.sh  # On windows use `set_env.bat`
    pulumi up
    ```
+
+## Testing
+
+### Pytest suite
+
+The tests in `tests/` (excluding `tests/e2e/`) exercise the deployed RAG
+pipeline, guardrails, and — for the DIY variants — the Streamlit frontend and
+the DIY custom model directly.
+
+```bash
+uv sync --extra dev
+uv run pytest tests --ignore=tests/e2e
+```
+
+Tests are parametrized over `mode`: one of `dr-dr`, `dr-diy`, `diy-dr`,
+`diy-diy` (RAG type × app type). Without `--pulumi_up`, only the mode matching
+the currently-configured `infra.settings_main.core` RAG/application type runs
+against the existing Pulumi stack; the rest are skipped. Pass `--pulumi_up` to
+deploy a fresh, disposable stack per mode instead:
+
+```bash
+uv run pytest tests --ignore=tests/e2e --pulumi_up                       # tear down on success, keep the stack if a test fails (for debugging)
+uv run pytest tests --ignore=tests/e2e --pulumi_up --always_delete_stack # always tear down, even after a failure
+```
+
+`test_diy_rag_custom_model.py` additionally needs `datarobot_drum` installed
+separately — it is not one of this project's dependencies, so the test skips
+itself automatically when the package is absent.
+
+### End-to-end tests
+
+`tests/e2e/` holds two suites: a Cypress suite (what the Harness `e2e_v2`
+pipeline actually runs) and an older Selenium suite that CI does not invoke.
+See [tests/e2e/README.md](tests/e2e/README.md) for setup, configuration, and
+how to run either one.
 
 ## Share results
 
